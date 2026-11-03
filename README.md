@@ -66,7 +66,7 @@ Scored once on trials that started 2017-2018.
 | Model | Valid AUC | Test AUC | Test PR AUC | Test balanced accuracy |
 |---|---|---|---|---|
 | Logistic regression | 0.721 | 0.719 | 0.313 | 65.8% |
-| LightGBM, 31 leaves | 0.736 | 0.741 | 0.365 | 68.1% |
+| LightGBM, 31 leaves | 0.736 | 0.741 | 0.365 | 68.0% |
 | LightGBM, 63 leaves | 0.739 | 0.746 | 0.386 | 68.1% |
 | **LightGBM, 127 leaves (champion)** | **0.749** | **0.757** | **0.402** | **68.7%** |
 
