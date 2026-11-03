@@ -10,6 +10,7 @@ The best model by validation AUC is registered and gets the `champion` alias.
 from __future__ import annotations
 
 import json
+import os
 import sys
 
 import lightgbm as lgb
@@ -107,7 +108,7 @@ def main() -> int:
     tr, va, te = (df[df.split == s] for s in ("train", "valid", "test"))
     print({s: (len(d), round(d.label.mean(), 3)) for s, d in [("train", tr), ("valid", va), ("test", te)]}, flush=True)
 
-    mlflow.set_tracking_uri(f"sqlite:///{REPO_ROOT / 'mlflow.db'}")
+    mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", f"sqlite:///{REPO_ROOT / 'mlflow.db'}"))
     mlflow.set_experiment("trial-termination")
     results = {}
 
@@ -118,7 +119,7 @@ def main() -> int:
         m = {"valid_" + k: v for k, v in metrics(va.label, pva, thr).items()} | {"test_" + k: v for k, v in metrics(te.label, pte, thr).items()}
         mlflow.log_params({"model": "logistic_regression", "class_weight": "balanced", "n_features": len(feats)})
         mlflow.log_metrics(m)
-        mlflow.sklearn.log_model(lr, "model")
+        mlflow.sklearn.log_model(lr, name="model", serialization_format="cloudpickle")
         results["logreg"] = {"run_id": run.info.run_id, **m}
         print("logreg", {k: round(v, 4) for k, v in m.items() if "auc" in k or "balanced" in k}, flush=True)
 
@@ -132,7 +133,7 @@ def main() -> int:
             mlflow.log_params({"model": "lightgbm", **params, "best_iteration": model.best_iteration_,
                                "n_features": len(feats), "threshold_youden_valid": thr})
             mlflow.log_metrics(m)
-            mlflow.lightgbm.log_model(model.booster_, "model")
+            mlflow.lightgbm.log_model(model.booster_, name="model")
             results[f"lgbm_{i}"] = {"run_id": run.info.run_id, "params": params, "threshold": thr, **m}
             print(f"lgbm_{i}", {k: round(v, 4) for k, v in m.items() if "auc" in k or "balanced" in k}, flush=True)
             if best is None or m["valid_auc"] > results[best]["valid_auc"]:
