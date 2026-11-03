@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trial Termination Risk</title>
+<meta name="description" content="Predicting which interventional clinical trials stop early, from ClinicalTrials.gov registration data, with a start-year split and MLflow tracking.">
+<style>
+:root { --bg:#fbfbfa; --fg:#1d1f23; --muted:#5c616b; --card:#ffffff; --line:#e3e4e7; --accent:#2f6fb0; --ok:#2e7d4f; --bad:#b3261e; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181c; --fg:#e8e9eb; --muted:#a2a7b0; --card:#1f2228; --line:#30343b; --accent:#6aa6e6; --ok:#6cc58f; --bad:#f2b8b5; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif; }
+main { max-width:960px; margin:0 auto; padding:40px 16px 64px; }
+h1 { font-size:1.9rem; line-height:1.2; margin:0 0 8px; }
+h2 { font-size:1.2rem; margin:40px 0 12px; }
+h3 { font-size:1rem; margin:20px 0 8px; color:var(--muted); }
+p.lede { color:var(--muted); margin:0 0 24px; max-width:720px; }
+.kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+.kpi { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+.kpi b { display:block; font-size:1.5rem; font-variant-numeric:tabular-nums; }
+.kpi span { color:var(--muted); font-size:.85rem; }
+figure { margin:0; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px; }
+figure img { width:100%; height:auto; display:block; }
+figcaption { color:#5c616b; font-size:.85rem; padding:6px 4px 2px; }
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }
+.tablewrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums; font-size:.92rem; }
+th, td { text-align:right; padding:6px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+th:first-child, td:first-child { text-align:left; }
+th { color:var(--muted); font-weight:600; }
+td.ok { color:var(--ok); font-weight:600; } td.bad { color:var(--bad); font-weight:600; }
+pre { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; overflow-x:auto; font-size:.85rem; }
+.flow { display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:.9rem; }
+.flow span { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 10px; }
+.flow i { color:var(--muted); font-style:normal; }
+a { color:var(--accent); }
+ul { padding-left:20px; }
+footer { color:var(--muted); font-size:.85rem; margin-top:48px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Which clinical trials stop early?</h1>
+<p class="lede">A model that flags interventional trials likely to end early (terminated, withdrawn or suspended) using only what is known when a trial is registered: phase, design, sponsor, sites, conditions and eligibility criteria. Built on every study record in ClinicalTrials.gov, with PySpark and Delta Lake feature steps, LightGBM, a start-year split so later trials never inform earlier ones, and MLflow tracking with a registered champion model.</p>
+
+<div class="kpis" id="kpis"></div>
+
+<h2>Results on held-out start years</h2>
+<div class="tablewrap"><table id="models"><thead><tr><th>Model</th><th>Valid AUC</th><th>Test AUC</th><th>Test PR AUC</th><th>Test balanced accuracy</th></tr></thead><tbody></tbody></table></div>
+<div class="grid2" style="margin-top:16px">
+<figure><img src="assets/roc_pr.png" alt="ROC and precision-recall curves on the test years"><figcaption>Published models on the full registry reach about 0.73 to 0.75 AUC (Elkin and Zhu 2021).</figcaption></figure>
+<figure><img src="assets/importance.png" alt="Top features by LightGBM gain"><figcaption>Share of total split gain in the champion model.</figcaption></figure>
+<figure><img src="assets/rate_by_year.png" alt="Early stop rate by start year with split colors"><figcaption>Train on trials started 2000 to 2014, choose settings on 2015 to 2016, report on 2017 to 2018.</figcaption></figure>
+<figure><img src="assets/calibration.png" alt="Calibration curve on test years"><figcaption>Class weights push scores up, so read them as a ranking, not a probability, unless recalibrated.</figcaption></figure>
+</div>
+
+<h2>Leakage controls</h2>
+<ul>
+<li><b>No enrollment count.</b> ClinicalTrials.gov replaces the planned enrollment with the actual number once a trial closes, so for closed trials it encodes the outcome (withdrawn trials show 0). <span id="enr"></span></li>
+<li><b>No dates or text written after the stop:</b> completion dates, last update, <code>whyStopped</code> and results are never features. A test fails the build if any of them reaches the feature table.</li>
+<li><b>Split by start year,</b> not at random, so the model is always scored on trials that started after everything it learned from.</li>
+</ul>
+
+<h2>Data</h2>
+<div class="tablewrap"><table id="data"><thead><tr><th>Step</th><th>Rows</th></tr></thead><tbody></tbody></table></div>
+
+<h2>Limitations</h2>
+<ul>
+<li>Site count and some design fields reflect the last registry update, not necessarily the record at registration; the registry's version history was not used.</li>
+<li>Trials started recently and already closed are skewed toward short or stopped studies, so 2019 onward is left out of evaluation.</li>
+<li>Labels treat withdrawn (never enrolled) and terminated trials the same; their causes differ.</li>
+<li>Runs locally on Spark 3.5 and Delta 3.2, not on a Databricks workspace.</li>
+</ul>
+
+<footer>Data: <a href="https://clinicaltrials.gov/data-api/api">ClinicalTrials.gov API v2</a> (public domain). Code: <a href="https://github.com/AbhayJuloori/trial-termination-risk-ctgov">github.com/AbhayJuloori/trial-termination-risk-ctgov</a>.</footer>
+</main>
+<script>
+const pct = (v, d = 1) => v == null ? "" : (v * 100).toFixed(d) + "%";
+const num = v => Math.round(v).toLocaleString("en-US");
+const f3 = v => v == null ? "" : v.toFixed(3);
+const rows = (id, data) => { document.querySelector(`#${id} tbody`).innerHTML = data.map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>").join(""); };
+fetch("assets/kpis.json").then(r => r.json()).then(k => {
+  const P = k.profile, R = k.results.results, champ = R[k.results.results.champion.name], S = k.results.splits;
+  const cards = [
+    [num(P.bronze), "study records pulled"], [num(P.labeled_closed_interventional), "closed interventional trials labeled"],
+    [f3(champ.test_auc), "test AUC (2017-2018 starts)"], [f3(champ.test_pr_auc), "test PR AUC"],
+    [pct(champ.test_balanced_accuracy), "test balanced accuracy"],
+    [(k.top_decile_rate / k.test_base_rate).toFixed(1) + "x", "early-stop rate in top score decile vs base"],
+  ];
+  document.getElementById("kpis").innerHTML = cards.map(([b, s]) => `<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join("");
+  rows("models", Object.entries(R).filter(([n]) => n !== "champion").map(([n, m]) => [
+    n === k.results.results.champion.name ? n + " (champion)" : n, f3(m.valid_auc), f3(m.test_auc), f3(m.test_pr_auc), pct(m.test_balanced_accuracy)]));
+  rows("data", [["Study records in bronze", num(P.bronze)], ["Silver (valid, de-duplicated)", num(P.silver)],
+    ["Closed interventional with start date", num(P.labeled_closed_interventional)],
+    ["Train 2000-2014 (early-stop rate)", num(S.train.n) + " (" + pct(S.train.positive_rate) + ")"],
+    ["Valid 2015-2016", num(S.valid.n) + " (" + pct(S.valid.positive_rate) + ")"],
+    ["Test 2017-2018", num(S.test.n) + " (" + pct(S.test.positive_rate) + ")"]]);
+  const e = P.enrollment_type_closed || {};
+  const tot = Object.values(e).reduce((a, b) => a + b, 0);
+  if (tot) document.getElementById("enr").textContent = `In this data, ${pct((e.ACTUAL || 0) / tot)} of closed trials carry an ACTUAL count.`;
+});
+</script>
+</body>
+</html>
