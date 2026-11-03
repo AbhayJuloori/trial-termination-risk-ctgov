@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trial-termination"
+version = "0.1.0"
+description = "Predicting early termination of interventional trials from ClinicalTrials.gov registration data"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "pyspark==3.5.3",
+  "delta-spark==3.2.1",
+  "pandas>=2.1",
+  "pyarrow>=14",
+  "lightgbm>=4.3",
+  "scikit-learn>=1.4",
+  "mlflow>=2.14",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "matplotlib>=3.8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
