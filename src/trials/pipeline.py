@@ -3,8 +3,9 @@
 Only fields known when a trial is registered or starts are turned into
 features. Excluded on purpose, because they are filled in or rewritten after a
 trial stops: enrollment count (API v2 replaces the planned number with the
-actual one once a study closes), completion dates, last update dates,
-whyStopped, and any results.
+actual one once a study closes), the start date type (a withdrawn trial never
+starts, so its start date stays ESTIMATED), completion dates, last update
+dates, whyStopped, and any results.
 """
 
 from __future__ import annotations
@@ -192,9 +193,8 @@ def eligibility_features(c: Column) -> list[Column]:
 def build_features(labeled: DataFrame) -> DataFrame:
     it = F.col("intervention_types")
     feats = labeled.select(
-        "nct_id", "label", "split", "start_year",
+        "nct_id", "label", "split", "start_year", "overall_status",
         F.month("start_date").alias("start_month"),
-        (F.col("start_date_type") == "ACTUAL").cast("int").alias("start_date_actual"),
         F.datediff("start_date", "first_submit_date").alias("days_submit_to_start"),
         _phase(F.col("phases")).alias("phase"),
         "allocation", "intervention_model", "primary_purpose", "masking", "n_masked_roles",

@@ -58,6 +58,7 @@ footer { color:var(--muted); font-size:.85rem; margin-top:48px; }
 <ul>
 <li><b>No enrollment count.</b> ClinicalTrials.gov replaces the planned enrollment with the actual number once a trial closes, so for closed trials it encodes the outcome (withdrawn trials show 0). <span id="enr"></span></li>
 <li><b>No dates or text written after the stop:</b> completion dates, last update, <code>whyStopped</code> and results are never features. A test fails the build if any of them reaches the feature table.</li>
+<li><b>Start date type dropped.</b> A withdrawn trial never starts, so its start date stays ESTIMATED; keeping that flag lifted the logistic baseline to 0.756 test AUC for the wrong reason. <span id="sens"></span></li>
 <li><b>Split by start year,</b> not at random, so the model is always scored on trials that started after everything it learned from.</li>
 </ul>
 
@@ -95,6 +96,8 @@ fetch("assets/kpis.json").then(r => r.json()).then(k => {
     ["Train 2000-2014 (early-stop rate)", num(S.train.n) + " (" + pct(S.train.positive_rate) + ")"],
     ["Valid 2015-2016", num(S.valid.n) + " (" + pct(S.valid.positive_rate) + ")"],
     ["Test 2017-2018", num(S.test.n) + " (" + pct(S.test.positive_rate) + ")"]]);
+  if (k.sensitivity_no_withdrawn) { const z = k.sensitivity_no_withdrawn.results; const c = z[z.champion.name];
+    document.getElementById("sens").textContent = `The top feature is days from registration to start, which withdrawn trials can also inflate, so a sensitivity model without withdrawn trials was trained: test AUC ${f3(c.test_auc)} on terminated and suspended vs completed.`; }
   const e = P.enrollment_type_closed || {};
   const tot = Object.values(e).reduce((a, b) => a + b, 0);
   if (tot) document.getElementById("enr").textContent = `In this data, ${pct((e.ACTUAL || 0) / tot)} of closed trials carry an ACTUAL count.`;

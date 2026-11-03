@@ -94,6 +94,9 @@ def main() -> None:
     order = np.argsort(-p)
     top = y[order[: len(y) // 10]].mean()
     kpis = {"profile": prof, "results": res, "top_decile_rate": float(top), "test_base_rate": float(y.mean())}
+    sens = REPORTS / "train_results_no_withdrawn.json"
+    if sens.exists():
+        kpis["sensitivity_no_withdrawn"] = json.loads(sens.read_text())
     (ASSETS / "kpis.json").write_text(json.dumps(kpis, indent=1, default=float))
     print("report written")
 

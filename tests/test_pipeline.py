@@ -45,7 +45,7 @@ def test_eligibility_counts(layers):
 
 
 def test_no_post_outcome_fields_are_features(layers):
-    banned = {"enrollment_count", "enrollment_type", "why_stopped", "overall_status", "completion_date"}
+    banned = {"enrollment_count", "enrollment_type", "why_stopped", "overall_status", "completion_date", "start_date_type", "start_date_actual"}
     model_inputs = set(layers["feature_cols"]) - set(DROP)
     assert not banned & model_inputs
     assert set(CATEGORICAL) <= model_inputs

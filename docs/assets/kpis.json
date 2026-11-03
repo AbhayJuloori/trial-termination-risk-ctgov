@@ -1,0 +1,483 @@
+{
+ "profile": {
+  "raw_lines": 609811,
+  "bronze": 609811,
+  "silver": 609811,
+  "quarantine": 0,
+  "duplicates_dropped": 0,
+  "status_counts": {
+   "WITHHELD": 987,
+   "ENROLLING_BY_INVITATION": 5218,
+   "SUSPENDED": 1771,
+   "APPROVED_FOR_MARKETING": 245,
+   "WITHDRAWN": 16950,
+   "COMPLETED": 333659,
+   "TERMINATED": 34641,
+   "ACTIVE_NOT_RECRUITING": 22006,
+   "NOT_YET_RECRUITING": 29904,
+   "NO_LONGER_AVAILABLE": 543,
+   "AVAILABLE": 249,
+   "RECRUITING": 64566,
+   "UNKNOWN": 99034,
+   "TEMPORARILY_NOT_AVAILABLE": 38
+  },
+  "study_types": {
+   "EXPANDED_ACCESS": 1075,
+   "INTERVENTIONAL": 465324,
+   "null": 987,
+   "OBSERVATIONAL": 142425
+  },
+  "labeled_closed_interventional": 304100,
+  "labeled_by_split": {
+   "test": {
+    "n": 33622,
+    "positive_rate": 0.1559395633811195
+   },
+   "None": {
+    "n": 107654,
+    "positive_rate": 0.1513274007468371
+   },
+   "train": {
+    "n": 131272,
+    "positive_rate": 0.14217045523797917
+   },
+   "valid": {
+    "n": 31552,
+    "positive_rate": 0.1482631845841785
+   }
+  },
+  "positive_rate_by_start_year": {
+   "1999": [
+    1311,
+    0.09077040427154844
+   ],
+   "2000": [
+    1740,
+    0.08735632183908046
+   ],
+   "2001": [
+    2260,
+    0.08805309734513274
+   ],
+   "2002": [
+    3323,
+    0.09027986758952754
+   ],
+   "2003": [
+    4546,
+    0.09920809502859657
+   ],
+   "2004": [
+    5932,
+    0.10434929197572489
+   ],
+   "2005": [
+    7200,
+    0.12666666666666668
+   ],
+   "2006": [
+    8589,
+    0.1505413901501921
+   ],
+   "2007": [
+    9531,
+    0.16241737488196412
+   ],
+   "2008": [
+    10829,
+    0.16206482593037214
+   ],
+   "2009": [
+    11551,
+    0.15479179291836204
+   ],
+   "2010": [
+    11932,
+    0.15202815957090177
+   ],
+   "2011": [
+    12465,
+    0.144484556758925
+   ],
+   "2012": [
+    13057,
+    0.14789002067856322
+   ],
+   "2013": [
+    13587,
+    0.14543313461396923
+   ],
+   "2014": [
+    14730,
+    0.14419551934826885
+   ],
+   "2015": [
+    15507,
+    0.1470948603856323
+   ],
+   "2016": [
+    16045,
+    0.14939233406045496
+   ],
+   "2017": [
+    16535,
+    0.15204112488660418
+   ],
+   "2018": [
+    17087,
+    0.15971206180136946
+   ],
+   "2019": [
+    16833,
+    0.17536980930315452
+   ],
+   "2020": [
+    15655,
+    0.1809006707122325
+   ],
+   "2021": [
+    17982,
+    0.16227338449560672
+   ],
+   "2022": [
+    16202,
+    0.14887050981360325
+   ],
+   "2023": [
+    14468,
+    0.1286286978158695
+   ],
+   "2024": [
+    11654,
+    0.11584005491676677
+   ],
+   "2025": [
+    7898,
+    0.12547480374778425
+   ]
+  },
+  "enrollment_type_closed": {
+   "null": 8937,
+   "ESTIMATED": 9378,
+   "ACTUAL": 285785
+  },
+  "features_rows": 304100,
+  "n_feature_columns": 61
+ },
+ "results": {
+  "results": {
+   "logreg": {
+    "run_id": "5b1e146463314759b74b96a768217b68",
+    "valid_auc": 0.7210014523781321,
+    "valid_pr_auc": 0.29908024139473643,
+    "valid_balanced_accuracy": 0.6652580218302484,
+    "valid_positive_rate": 0.1482631845841785,
+    "valid_n": 31552,
+    "test_auc": 0.7185180474877472,
+    "test_pr_auc": 0.3131088156135051,
+    "test_balanced_accuracy": 0.6576617013583816,
+    "test_positive_rate": 0.1559395633811195,
+    "test_n": 33622
+   },
+   "lgbm_0": {
+    "run_id": "c7fe821a8a9b4687acff115a38d569f6",
+    "params": {
+     "learning_rate": 0.05,
+     "num_leaves": 31,
+     "min_child_samples": 50
+    },
+    "threshold": 0.19589365664810862,
+    "valid_auc": 0.7357575578818678,
+    "valid_pr_auc": 0.3354140525366181,
+    "valid_balanced_accuracy": 0.6719026509886064,
+    "valid_positive_rate": 0.1482631845841785,
+    "valid_n": 31552,
+    "test_auc": 0.7408176915316379,
+    "test_pr_auc": 0.364897182860759,
+    "test_balanced_accuracy": 0.6804521375361592,
+    "test_positive_rate": 0.1559395633811195,
+    "test_n": 33622
+   },
+   "lgbm_1": {
+    "run_id": "58ed2926824e461c87fa02060bd28416",
+    "params": {
+     "learning_rate": 0.05,
+     "num_leaves": 63,
+     "min_child_samples": 100
+    },
+    "threshold": 0.2000114276255453,
+    "valid_auc": 0.7389326245707685,
+    "valid_pr_auc": 0.33501233253321405,
+    "valid_balanced_accuracy": 0.6750543595795787,
+    "valid_positive_rate": 0.1482631845841785,
+    "valid_n": 31552,
+    "test_auc": 0.7464101262725417,
+    "test_pr_auc": 0.38594549705555914,
+    "test_balanced_accuracy": 0.6808026995056028,
+    "test_positive_rate": 0.1559395633811195,
+    "test_n": 33622
+   },
+   "lgbm_2": {
+    "run_id": "4ba506c7004745b9937d3447d90ac7be",
+    "params": {
+     "learning_rate": 0.03,
+     "num_leaves": 127,
+     "min_child_samples": 200
+    },
+    "threshold": 0.19813716768129436,
+    "valid_auc": 0.7492950611157294,
+    "valid_pr_auc": 0.3595331411190464,
+    "valid_balanced_accuracy": 0.6817083033412652,
+    "valid_positive_rate": 0.1482631845841785,
+    "valid_n": 31552,
+    "test_auc": 0.7574790782004921,
+    "test_pr_auc": 0.4015253456829993,
+    "test_balanced_accuracy": 0.6870219459434458,
+    "test_positive_rate": 0.1559395633811195,
+    "test_n": 33622
+   },
+   "champion": {
+    "name": "lgbm_2",
+    "version": 1
+   }
+  },
+  "importance_gain": {
+   "days_submit_to_start": 0.23488277345666575,
+   "healthy_volunteers": 0.18101214068008997,
+   "iv_behavioral": 0.0815894604470852,
+   "has_us_site": 0.07572327993887719,
+   "n_sites": 0.05903361420268279,
+   "elig_chars": 0.04269305359517273,
+   "mesh_neoplasms": 0.02705664186166575,
+   "sponsor_class": 0.02271406966325545,
+   "n_countries": 0.021615657367521923,
+   "primary_purpose": 0.019873607685310428,
+   "responsible_party": 0.01857521449873389,
+   "n_arms": 0.01821154662493721,
+   "n_primary_outcomes": 0.018140011436791007,
+   "min_age_years": 0.01744521891141704,
+   "n_collaborators": 0.01718915050503218,
+   "iv_drug": 0.012627882780808931,
+   "max_age_years": 0.012395867013690576,
+   "intervention_model": 0.012142772348872446,
+   "elig_n_inclusion": 0.010954557998009916,
+   "n_masked_roles": 0.010691161048511156,
+   "phase": 0.0105724304255563,
+   "n_secondary_outcomes": 0.01049560377734019,
+   "elig_n_exclusion": 0.009539239235438784,
+   "has_dmc": 0.009173999525136305,
+   "iv_other": 0.0038871734047035422
+  },
+  "test_auc_by_year": {
+   "2017": 0.7520179413797816,
+   "2018": 0.7626225334253529
+  },
+  "test_auc_by_phase": {
+   "EARLY_PHASE1": {
+    "auc": 0.7609392039258451,
+    "n": 505
+   },
+   "NA": {
+    "auc": 0.7469022205229101,
+    "n": 19491
+   },
+   "PHASE1": {
+    "auc": 0.7627823253767362,
+    "n": 3571
+   },
+   "PHASE1/PHASE2": {
+    "auc": 0.6707576396042076,
+    "n": 1078
+   },
+   "PHASE2": {
+    "auc": 0.6768619235920044,
+    "n": 3871
+   },
+   "PHASE2/PHASE3": {
+    "auc": 0.7568972835314092,
+    "n": 448
+   },
+   "PHASE3": {
+    "auc": 0.6909287372828408,
+    "n": 2350
+   },
+   "PHASE4": {
+    "auc": 0.7707712847899764,
+    "n": 2274
+   }
+  },
+  "splits": {
+   "train": {
+    "n": 131272,
+    "positive_rate": 0.14217045523797917
+   },
+   "valid": {
+    "n": 31552,
+    "positive_rate": 0.1482631845841785
+   },
+   "test": {
+    "n": 33622,
+    "positive_rate": 0.1559395633811195
+   }
+  }
+ },
+ "top_decile_rate": 0.44348602022605593,
+ "test_base_rate": 0.1559395633811195,
+ "sensitivity_no_withdrawn": {
+  "results": {
+   "logreg": {
+    "run_id": "17d1b5db7e0f44f3a6f8a154b0f9f5cf",
+    "valid_auc": 0.716753147059391,
+    "valid_pr_auc": 0.21774982100623683,
+    "valid_balanced_accuracy": 0.6657232723904972,
+    "valid_positive_rate": 0.10759115361625822,
+    "valid_n": 30114,
+    "test_auc": 0.7260019516474028,
+    "test_pr_auc": 0.24828056877954718,
+    "test_balanced_accuracy": 0.6754855993135571,
+    "test_positive_rate": 0.11701929060360922,
+    "test_n": 32140
+   },
+   "lgbm_0": {
+    "run_id": "22e49c0e48964357bd5201558a745864",
+    "params": {
+     "learning_rate": 0.05,
+     "num_leaves": 31,
+     "min_child_samples": 50
+    },
+    "threshold": 0.13533435712209807,
+    "valid_auc": 0.6865380807738353,
+    "valid_pr_auc": 0.19294777936401472,
+    "valid_balanced_accuracy": 0.639136546682874,
+    "valid_positive_rate": 0.10759115361625822,
+    "valid_n": 30114,
+    "test_auc": 0.6938423006949679,
+    "test_pr_auc": 0.2163485501129665,
+    "test_balanced_accuracy": 0.6551098302210294,
+    "test_positive_rate": 0.11701929060360922,
+    "test_n": 32140
+   },
+   "lgbm_1": {
+    "run_id": "7a6f1883d8d548df83fbfa91bef0c0bc",
+    "params": {
+     "learning_rate": 0.05,
+     "num_leaves": 63,
+     "min_child_samples": 100
+    },
+    "threshold": 0.13346890477188994,
+    "valid_auc": 0.7058836642328121,
+    "valid_pr_auc": 0.20494552476248218,
+    "valid_balanced_accuracy": 0.6570712708689936,
+    "valid_positive_rate": 0.10759115361625822,
+    "valid_n": 30114,
+    "test_auc": 0.7200550982068699,
+    "test_pr_auc": 0.23223100868963353,
+    "test_balanced_accuracy": 0.6673558681747092,
+    "test_positive_rate": 0.11701929060360922,
+    "test_n": 32140
+   },
+   "lgbm_2": {
+    "run_id": "b15effcb70e1476e889b5cdf74782b22",
+    "params": {
+     "learning_rate": 0.03,
+     "num_leaves": 127,
+     "min_child_samples": 200
+    },
+    "threshold": 0.14980595545688447,
+    "valid_auc": 0.7182276549825108,
+    "valid_pr_auc": 0.2160196955273221,
+    "valid_balanced_accuracy": 0.6652732298049333,
+    "valid_positive_rate": 0.10759115361625822,
+    "valid_n": 30114,
+    "test_auc": 0.7302906505787097,
+    "test_pr_auc": 0.24418404805396252,
+    "test_balanced_accuracy": 0.6749267068826869,
+    "test_positive_rate": 0.11701929060360922,
+    "test_n": 32140
+   },
+   "champion": {
+    "name": "lgbm_2",
+    "version": null
+   }
+  },
+  "importance_gain": {
+   "healthy_volunteers": 0.26262761521203065,
+   "days_submit_to_start": 0.17850022118250972,
+   "iv_behavioral": 0.10128061996618726,
+   "has_us_site": 0.09558459478611561,
+   "elig_chars": 0.07665378744801474,
+   "mesh_neoplasms": 0.023038577350699644,
+   "min_age_years": 0.02007082845345902,
+   "responsible_party": 0.018306577715717285,
+   "n_primary_outcomes": 0.01689316689486977,
+   "primary_purpose": 0.01666701047698489,
+   "n_arms": 0.016053615679750992,
+   "n_sites": 0.015156314453147943,
+   "elig_n_inclusion": 0.01319203268437907,
+   "n_collaborators": 0.012775206551818474,
+   "iv_drug": 0.012725263467848124,
+   "n_secondary_outcomes": 0.011350780872751697,
+   "intervention_model": 0.01126795109276668,
+   "has_dmc": 0.010390295347927401,
+   "n_countries": 0.008573250183479772,
+   "n_masked_roles": 0.008053456350963306,
+   "max_age_years": 0.006518248634413793,
+   "elig_n_exclusion": 0.006177288029061498,
+   "start_month": 0.005636406887568942,
+   "iv_device": 0.005180887683749633,
+   "mesh_mental": 0.004021695201435448
+  },
+  "test_auc_by_year": {
+   "2017": 0.7266623365390511,
+   "2018": 0.7338218228566757
+  },
+  "test_auc_by_phase": {
+   "EARLY_PHASE1": {
+    "auc": 0.7356966612691803,
+    "n": 459
+   },
+   "NA": {
+    "auc": 0.7192680714052483,
+    "n": 18825
+   },
+   "PHASE1": {
+    "auc": 0.7411258038777083,
+    "n": 3422
+   },
+   "PHASE1/PHASE2": {
+    "auc": 0.6126318432948268,
+    "n": 999
+   },
+   "PHASE2": {
+    "auc": 0.6220539213086815,
+    "n": 3619
+   },
+   "PHASE2/PHASE3": {
+    "auc": 0.7205981182795699,
+    "n": 428
+   },
+   "PHASE3": {
+    "auc": 0.6347560388050144,
+    "n": 2237
+   },
+   "PHASE4": {
+    "auc": 0.7097038715128527,
+    "n": 2117
+   }
+  },
+  "splits": {
+   "train": {
+    "n": 127097,
+    "positive_rate": 0.11399167564930722
+   },
+   "valid": {
+    "n": 30114,
+    "positive_rate": 0.10759115361625822
+   },
+   "test": {
+    "n": 32140,
+    "positive_rate": 0.11701929060360922
+   }
+  }
+ }
+}

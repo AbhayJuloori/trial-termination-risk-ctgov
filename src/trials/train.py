@@ -27,7 +27,7 @@ from trials.config import LAKE_DIR, REPO_ROOT, SEED, read_table
 
 CATEGORICAL = ["phase", "allocation", "intervention_model", "primary_purpose", "masking", "sponsor_class",
                "responsible_party", "sex"]
-DROP = ["nct_id", "label", "split", "start_year"]
+DROP = ["nct_id", "label", "split", "start_year", "overall_status"]
 MODEL_NAME = "trial-termination-lgbm"
 
 
@@ -105,11 +105,15 @@ def main() -> int:
     from mlflow.tracking import MlflowClient
 
     df, feats = prepare(load_features())
+    variant = os.environ.get("TRIALS_VARIANT", "main")
+    if variant == "no_withdrawn":
+        # sensitivity: withdrawn trials never start, so their dates are all anticipated
+        df = df[df.overall_status != "WITHDRAWN"]
     tr, va, te = (df[df.split == s] for s in ("train", "valid", "test"))
     print({s: (len(d), round(d.label.mean(), 3)) for s, d in [("train", tr), ("valid", va), ("test", te)]}, flush=True)
 
     mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", f"sqlite:///{REPO_ROOT / 'mlflow.db'}"))
-    mlflow.set_experiment("trial-termination")
+    mlflow.set_experiment("trial-termination" if variant == "main" else f"trial-termination-{variant}")
     results = {}
 
     with mlflow.start_run(run_name="logreg_baseline") as run:
@@ -140,11 +144,14 @@ def main() -> int:
                 best = f"lgbm_{i}"
                 best_model, best_pte = model, pte
 
-    # register the best LightGBM by validation AUC as champion
-    client = MlflowClient()
-    mv = mlflow.register_model(f"runs:/{results[best]['run_id']}/model", MODEL_NAME)
-    client.set_registered_model_alias(MODEL_NAME, "champion", mv.version)
-    results["champion"] = {"name": best, "version": mv.version}
+    # register the best LightGBM by validation AUC as champion (main variant only)
+    if variant == "main":
+        client = MlflowClient()
+        mv = mlflow.register_model(f"runs:/{results[best]['run_id']}/model", MODEL_NAME)
+        client.set_registered_model_alias(MODEL_NAME, "champion", mv.version)
+        results["champion"] = {"name": best, "version": mv.version}
+    else:
+        results["champion"] = {"name": best, "version": None}
 
     imp = pd.Series(best_model.booster_.feature_importance("gain"), index=feats).sort_values(ascending=False)
     te = te.assign(p=best_pte)
@@ -156,8 +163,9 @@ def main() -> int:
            "splits": {s: {"n": int(len(d)), "positive_rate": float(d.label.mean())} for s, d in [("train", tr), ("valid", va), ("test", te)]}}
     reports = LAKE_DIR / "_reports"
     reports.mkdir(parents=True, exist_ok=True)
-    (reports / "train_results.json").write_text(json.dumps(out, indent=1, default=float))
-    te[["nct_id", "label", "p", "start_year", "phase"]].to_parquet(reports / "test_predictions.parquet", index=False)
+    suffix = "" if variant == "main" else f"_{variant}"
+    (reports / f"train_results{suffix}.json").write_text(json.dumps(out, indent=1, default=float))
+    te[["nct_id", "label", "p", "start_year", "phase"]].to_parquet(reports / f"test_predictions{suffix}.parquet", index=False)
     print(json.dumps({"champion": results["champion"], "test_auc": results[best]["test_auc"]}, default=float))
     return 0
 
