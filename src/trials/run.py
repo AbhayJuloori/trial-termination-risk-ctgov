@@ -40,7 +40,7 @@ def main() -> int:
                                         labeled.filter("start_year BETWEEN 1999 AND 2025").groupBy("start_year")
                                         .agg(F.count("*").alias("n"), F.avg("label").alias("pos")).orderBy("start_year").collect()},
         "enrollment_type_closed": {r["enrollment_type"]: r["count"] for r in labeled.groupBy("enrollment_type").count().collect()},
-        "features_rows": feats.count(), "n_feature_columns": len(feats.columns) - 4,
+        "features_rows": feats.count(), "n_feature_columns": len(feats.columns) - 5,
     }
     checks = [
         {"check": "raw lines = bronze rows", "left": raw, "right": nb, "passed": raw == nb},

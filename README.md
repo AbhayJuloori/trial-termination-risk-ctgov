@@ -41,7 +41,7 @@ Label: `overallStatus` TERMINATED, WITHDRAWN or SUSPENDED = 1, COMPLETED = 0.
   collaborators, DMC and FDA flags, condition and keyword counts, 16 MeSH disease groups,
   arm and intervention types, outcome counts, eligibility criteria length and inclusion /
   exclusion bullet counts, age limits, sex, healthy volunteers, site and country counts, US
-  site, start month and days from registration to start (61 features).
+  site, start month and days from registration to start (60 features).
 - **Leakage controls.** Left out because they are written or rewritten after a trial stops:
   - *Enrollment count.* API v2 replaces the planned number with the actual one once a trial
     closes; 94% of closed trials here carry an ACTUAL count (withdrawn trials show 0).
